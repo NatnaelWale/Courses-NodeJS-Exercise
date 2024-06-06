@@ -30,7 +30,7 @@ function displayData(data) {
         row.appendChild(createCell(course.dept));
         row.appendChild(createCell(course.courseNum));
         row.appendChild(createCell(course.courseName));
-        row.appendChild(createVisitLink(course.courseName))
+        row.appendChild(createVisitLink(course.id))
         table.querySelector("tbody").appendChild(row);
     });
 
@@ -75,7 +75,7 @@ function createVisitLink(text){
     visitLinkTd.className = "w-25";
     const visitLink = document.createElement('a');
     visitLink.textContent = "Show Details";
-    visitLink.href = "details.html?course=" + text; 
+    visitLink.href = "details.html?courseId=" + text; 
     visitLink.className = "text-decoration-none"
     console.log(visitLink.href)
 

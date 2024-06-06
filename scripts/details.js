@@ -1,50 +1,58 @@
 "use strict";
 
-//
-
 const apiBaseUrl = "http://localhost:8081/api/courses";
-
 let course;
 
 window.onload = () => {
-  let urlParams = new URLSearchParams(location.search);
-
-  if (urlParams.has("course") == true) {
-    course = urlParams.get("course");
-  }
-  console.log(course);
+  getCourseIdFromUrl();
   loadCourseData();
 };
 
 const resultsOutput = document.getElementById("resultsOutput");
 
+function getCourseIdFromUrl() {
+  let urlParams = new URLSearchParams(location.search);
+  if (urlParams.has("courseId")) {
+    course = urlParams.get("courseId");
+  }
+}
+
 function loadCourseData() {
   resultsOutput.innerHTML = "";
-
-  let actualUrl = apiBaseUrl;
-
-  console.log(actualUrl);
-
-  fetch(actualUrl)
-    .then((response) => response.json())
+  fetchCourseData(apiBaseUrl)
     .then((data) => {
-      console.log(data);
-      for (let selectedCourse of data) {
-        if (selectedCourse.courseName === course) {
-          console.log(selectedCourse);
-          let instructor = document.createElement("h3");
-          instructor.innerHTML = `Instructor: ${selectedCourse.instructor}`;
-
-          let startDate = document.createElement("h3");
-          startDate.innerHTML = `Start Date: ${selectedCourse.startDate}`;
-
-          let numDays = document.createElement("h3");
-          numDays.innerHTML = `Number of Days: ${selectedCourse.numDays}`;
-
-          resultsOutput.appendChild(instructor);
-          resultsOutput.appendChild(startDate);
-          resultsOutput.appendChild(numDays);
-        }
-      }
+      displaySelectedCourse(data);
+    //   console.log(data)
     });
+}
+
+function fetchCourseData(apiUrl) {
+  return fetch(apiUrl)
+    .then((response) => response.json())
+    .catch((error) => console.error('Error fetching course data:', error));
+}
+
+function displaySelectedCourse(courses) {
+  for (let selectedCourse of courses) { 
+    if (selectedCourse.id == course) {
+      displayCourseDetails(selectedCourse);
+    //   console.log(selectedCourse)
+    }
+  }
+}
+
+function displayCourseDetails(course) {
+  let instructor = createCourseDetailElement("Instructor", course.instructor);
+  let startDate = createCourseDetailElement("Start Date", course.startDate);
+  let numDays = createCourseDetailElement("Number of Days", course.numDays);
+
+  resultsOutput.appendChild(instructor);
+  resultsOutput.appendChild(startDate);
+  resultsOutput.appendChild(numDays);
+}
+
+function createCourseDetailElement(label, value) {
+  let element = document.createElement("h3");
+  element.innerHTML = `${label}: ${value}`;
+  return element;
 }
